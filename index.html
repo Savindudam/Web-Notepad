@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HACK PAD - TERMINAL v1.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #00cc33;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,204,51,0.015) 3px, rgba(0,204,51,0.015) 6px);
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+    }
+
+    header {
+      text-align: center;
+      flex-shrink: 0;
+      margin-bottom: 8px;
+    }
+
+    .title-wrapper {
+      position: relative;
+      display: inline-block;
+      perspective: 800px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #00ff44;
+      text-shadow: 0 0 8px rgba(0,255,68,0.4);
+      letter-spacing: 1.5px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease-out;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      color: #00aa33;
+      font-size: 1.05rem;
+      margin-top: 6px;
+      opacity: 0.92;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 4px rgba(0,204,51,0.3);
+    }
+
+    .editor-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+      border: 1px solid #006622;
+      border-radius: 3px;
+      overflow: hidden;
+      background: #000811;
+      position: relative;
+    }
+
+    .toolbar {
+      background: #000a00;
+      border-bottom: 1px solid #006622;
+      padding: 8px 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      z-index: 3;
+    }
+
+    button {
+      background: #001100;
+      color: #00cc33;
+      border: 1px solid #006622;
+      padding: 8px 16px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #003300;
+      color: #00ff66;
+      border-color: #00cc33;
+      box-shadow: 0 0 10px rgba(0,204,51,0.25);
+    }
+
+    #fileInput { display: none; }
+
+    #notepad-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #matrix-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.22;
+    }
+
+    #notepad {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      background: transparent;
+      color: #00ff44;
+      padding: 16px 20px;
+      font-size: 1.15rem;
+      line-height: 1.55;
+      outline: none;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      caret-color: transparent;
+    }
+
+    #notepad:empty::before {
+      content: ">> ENTER TEXT OR LOAD FILE...";
+      color: #004d1a;
+    }
+
+    #stats {
+      text-align: right;
+      color: #009922;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+      background: #000a00;
+      border-top: 1px solid #004d1a;
+      z-index: 3;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 12px 0;
+      color: #006622;
+      font-size: 0.95rem;
+      border-top: 1px solid #004d1a;
+      text-shadow: 0 0 6px rgba(0,204,51,0.3);
+      animation: soft-glow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes soft-glow {
+      from { text-shadow: 0 0 6px rgba(0,204,51,0.3); }
+      to   { text-shadow: 0 0 12px rgba(0,204,51,0.6); }
+    }
+
+    .footer a {
+      color: #00ff66;
+      text-decoration: none;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(0,255,102,0.6);
+      transition: all 0.3s;
+    }
+
+    .footer a:hover {
+      color: #33ff99;
+      text-shadow: 0 0 16px rgba(51,255,153,0.9);
+      transform: translateY(-1px);
+    }
+
+    #notepad::-webkit-scrollbar { width: 10px; }
+    #notepad::-webkit-scrollbar-track { background: #000; }
+    #notepad::-webkit-scrollbar-thumb { background: #006622; }
+    #notepad::-webkit-scrollbar-thumb:hover { background: #009922; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-wrapper">
+        <h1>HACK PAD - TERMINAL</h1>
+      </div>
+      <p class="subtitle">root@session:~/notes # autosave active</p>
+    </header>
+
+    <div class="editor-wrapper">
+      <div class="toolbar">
+        <button onclick="document.getElementById('fileInput').click()">OPEN FILE</button>
+        <button onclick="saveAs()">SAVE AS...</button>
+        <button onclick="clearNotes()">CLEAR BUFFER</button>
+      </div>
+
+      <div id="notepad-container">
+        <canvas id="matrix-bg"></canvas>
+        <div id="notepad" contenteditable="true"></div>
+      </div>
+    </div>
+
+    <input type="file" id="fileInput" accept="text/plain,.txt,.md,.js,.json" />
+
+    <div id="stats">CHAR: 0 | WORDS: 0</div>
+
+    <div class="footer">
+      Made by DreamXHava - 
+      <a href="https://github.com/Savindudam" target="_blank">More Projects</a>
+    </div>
+  </div>
+
+  <script>
+    // Mouse-follow subtle movement on title
+    const title = document.querySelector('h1');
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 12;
+      title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.2}deg) rotateY(${x*0.3}deg)`;
+    });
+
+    // Matrix rain
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    setTimeout(resize, 100);
+
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize) + 1;
+    const drops = Array(columns).fill(1).map(() => Math.random() * -50);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.04)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#009922';
+      ctx.font = fontSize + 'px "JetBrains Mono"';
+
+      drops.forEach((y,i) => {
+        const text = chars[Math.floor(Math.random()*chars.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y*fontSize);
+        if (y*fontSize > canvas.height && Math.random() > 0.96) drops[i] = 0;
+        drops[i] += 0.8 + Math.random()*0.4;
+      });
+    }
+
+    setInterval(draw, 50);
+
+    // Notepad logic
+    const notepad = document.getElementById('notepad');
+    const stats = document.getElementById('stats');
+    const fileInput = document.getElementById('fileInput');
+
+    if (localStorage.getItem('hackPadNotes')) {
+      notepad.innerHTML = localStorage.getItem('hackPadNotes');
+      updateStats();
+    }
+
+    notepad.addEventListener('input', () => {
+      localStorage.setItem('hackPadNotes', notepad.innerHTML);
+      updateStats();
+    });
+
+    function updateStats() {
+      const text = notepad.innerText || '';
+      stats.textContent = `CHAR: ${text.length} | WORDS: ${text.trim().split(/\s+/).filter(Boolean).length}`;
+    }
+
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        notepad.innerText = ev.target.result;
+        localStorage.setItem('hackPadNotes', notepad.innerHTML);
+        updateStats();
+      };
+      reader.readAsText(file);
+      fileInput.value = '';
+    });
+
+    async function saveAs() {
+      const text = notepad.innerText || '';
+      if (!text.trim()) return alert("[ERROR] Buffer is empty");
+      const name = 'notes_dump.txt';
+      try {
+        if ('showSaveFilePicker' in window) {
+          const handle = await window.showSaveFilePicker({suggestedName: name});
+          const writable = await handle.createWritable();
+          await writable.write(text);
+          await writable.close();
+        } else {
+          const blob = new Blob([text], {type: 'text/plain'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = name; a.click();
+          URL.revokeObjectURL(url);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') alert("[FAIL] Could not save");
+      }
+    }
+
+    function clearNotes() {
+      if (confirm("Wipe buffer?")) {
+        notepad.innerHTML = '';
+        localStorage.removeItem('hackPadNotes');
+        updateStats();
+      }
+    }
+
+    notepad.focus();
+    updateStats();
+  </script>
+</body>
+</html>
