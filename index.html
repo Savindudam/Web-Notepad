@@ -219,110 +219,149 @@
   </div>
 
   <script>
-    const title = document.querySelector('h1');
-    document.addEventListener('mousemove', e => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 12;
-      title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.2}deg) rotateY(${x*0.3}deg)`;
-    });
+    <script>
+const titleEl = document.querySelector('h1');
 
-    const canvas = document.getElementById('matrix-bg');
-    const ctx = canvas.getContext('2d');
+document.addEventListener('mousemove', (e) => {
+  const dx = (e.clientX / window.innerWidth - 0.5) * 20;
+  const dy = (e.clientY / window.innerHeight - 0.5) * 12;
 
-    function resize() {
-      canvas.width = canvas.parentElement.offsetWidth;
-      canvas.height = canvas.parentElement.offsetHeight;
+  titleEl.style.transform =
+    `translate(${dx}px, ${dy}px) rotateX(${dy * 0.2}deg) rotateY(${dx * 0.3}deg)`;
+});
+
+const canvas = document.getElementById('matrix-bg');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width  = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const glyphs =
+  '01アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+const fontSize = 16;
+
+let columns = Math.floor(canvas.width / fontSize);
+let rain = new Array(columns).fill(0).map(() => Math.random() * -50);
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#009922';
+  ctx.font = `${fontSize}px JetBrains Mono`;
+
+  rain.forEach((y, i) => {
+    const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+    ctx.fillText(char, i * fontSize, y * fontSize);
+
+    if (y * fontSize > canvas.height && Math.random() > 0.97) {
+      rain[i] = 0;
+    } else {
+      rain[i] += 0.9;
     }
-    window.addEventListener('resize', resize);
-    resize();
-    setTimeout(resize, 100);
+  });
+}
 
-    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
-    const fontSize = 16;
-    const columns = Math.floor(canvas.width / fontSize) + 1;
-    const drops = Array(columns).fill(1).map(() => Math.random() * -50);
+setInterval(drawMatrix, 50);
 
-    function draw() {
-      ctx.fillStyle = 'rgba(0,0,0,0.04)';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle = '#009922';
-      ctx.font = fontSize + 'px "JetBrains Mono"';
 
-      drops.forEach((y,i) => {
-        const text = chars[Math.floor(Math.random()*chars.length)];
-        const x = i * fontSize;
-        ctx.fillText(text, x, y*fontSize);
-        if (y*fontSize > canvas.height && Math.random() > 0.96) drops[i] = 0;
-        drops[i] += 0.8 + Math.random()*0.4;
-      });
-    }
 
-    setInterval(draw, 50);
+const editor = document.getElementById('notepad');
+const stats  = document.getElementById('stats');
+const fileIn = document.getElementById('fileInput');
 
-    const notepad = document.getElementById('notepad');
-    const stats = document.getElementById('stats');
-    const fileInput = document.getElementById('fileInput');
+const STORAGE_KEY = 'hackPadNotes';
 
-    if (localStorage.getItem('hackPadNotes')) {
-      notepad.innerHTML = localStorage.getItem('hackPadNotes');
-      updateStats();
-    }
+// Restore last session if available
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved) {
+  editor.innerHTML = saved;
+  updateStats();
+}
 
-    notepad.addEventListener('input', () => {
-      localStorage.setItem('hackPadNotes', notepad.innerHTML);
-      updateStats();
-    });
+// Save on every change (cheap enough for text)
+editor.addEventListener('input', () => {
+  localStorage.setItem(STORAGE_KEY, editor.innerHTML);
+  updateStats();
+});
 
-    function updateStats() {
-      const text = notepad.innerText || '';
-      stats.textContent = `CHAR: ${text.length} | WORDS: ${text.trim().split(/\s+/).filter(Boolean).length}`;
-    }
+function updateStats() {
+  const text = editor.innerText || '';
+  const words = text.trim().split(/\s+/).filter(Boolean);
 
-    fileInput.addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        notepad.innerText = ev.target.result;
-        localStorage.setItem('hackPadNotes', notepad.innerHTML);
-        updateStats();
-      };
-      reader.readAsText(file);
-      fileInput.value = '';
-    });
+  stats.textContent =
+    `CHAR: ${text.length} | WORDS: ${words.length}`;
+}
 
-    async function saveAs() {
-      const text = notepad.innerText || '';
-      if (!text.trim()) return alert("[ERROR] Buffer is empty");
-      const name = 'notes_dump.txt';
-      try {
-        if ('showSaveFilePicker' in window) {
-          const handle = await window.showSaveFilePicker({suggestedName: name});
-          const writable = await handle.createWritable();
-          await writable.write(text);
-          await writable.close();
-        } else {
-          const blob = new Blob([text], {type: 'text/plain'});
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = name; a.click();
-          URL.revokeObjectURL(url);
-        }
-      } catch (err) {
-        if (err.name !== 'AbortError') alert("[FAIL] Could not save");
-      }
-    }
 
-    function clearNotes() {
-      if (confirm("Wipe buffer?")) {
-        notepad.innerHTML = '';
-        localStorage.removeItem('hackPadNotes');
-        updateStats();
-      }
-    }
 
-    notepad.focus();
+fileIn.addEventListener('change', () => {
+  const file = fileIn.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    editor.innerText = reader.result;
+    localStorage.setItem(STORAGE_KEY, editor.innerHTML);
     updateStats();
+  };
+
+  reader.readAsText(file);
+  fileIn.value = '';
+});
+
+
+async function saveAs() {
+  const text = editor.innerText || '';
+  if (!text.trim()) {
+    alert('Nothing to save yet.');
+    return;
+  }
+
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await showSaveFilePicker({
+        suggestedName: 'notes.txt'
+      });
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+    } else {
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+
+      a.href = url;
+      a.download = 'notes.txt';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      alert('Could not save the file.');
+    }
+  }
+}
+
+function clearNotes() {
+  if (!confirm('Clear everything?')) return;
+
+  editor.innerHTML = '';
+  localStorage.removeItem(STORAGE_KEY);
+  updateStats();
+}
+
+// Autofocus feels natural for a pad
+editor.focus();
+updateStats();
+</script>
+
   </script>
 </body>
 
