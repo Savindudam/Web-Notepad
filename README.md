@@ -96,4 +96,4 @@ Feel free to fork, modify, and use it for personal projects.
 
 ## From Author
 
-This is only a base version of this project which is the version 1.0. Upgrades and more new stuff is going to be added to the version 1.1 . Looking foward to publish it asap. If you find any errors with this code please be kind to report them to my gmail : threnox.exe@gmail.com
+This is only a base version of this project which is the version 1.0. Upgrades and more new stuff is going to be added to the version 1.1 . Looking foward to publish it asap. If you find any errors with this code please be kind to report them to my gmail : threnox.exe@gmail.com . A small easter Egg is added here to improve the good looking behaviour of this site hope you will notice it .
