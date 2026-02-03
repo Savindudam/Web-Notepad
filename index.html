@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HACK PAD - TERMINEL v1.0</title>
+  <title>HACK PAD - TERMINEL v1.2.7</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin:0; padding:0; }
@@ -20,10 +20,10 @@
       content: "";
       position: fixed;
       inset: 0;
-      background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,204,51,0.015) 3px, rgba(0,204,51,0.015) 6px);
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,204,51,0.018) 3px, rgba(0,204,51,0.018) 6px);
       pointer-events: none;
       z-index: 9999;
-      opacity: 0.35;
+      opacity: 0.4;
     }
 
     .container {
@@ -46,66 +46,156 @@
     }
 
     h1 {
-      font-size: 2.8rem;
+      font-size: 2.9rem;
       color: #00ff44;
-      text-shadow: 0 0 8px rgba(0,255,68,0.4);
-      letter-spacing: 1.5px;
+      text-shadow: 0 0 12px rgba(0,255,68,0.5);
+      letter-spacing: 2px;
       transform-style: preserve-3d;
-      transition: transform 0.5s ease-out;
+      transition: transform 0.4s ease-out;
       margin: 0;
       white-space: nowrap;
     }
 
     .subtitle {
-      color: #00aa33;
-      font-size: 1.05rem;
+      color: #00bb44;
+      font-size: 1.1rem;
       margin-top: 6px;
-      opacity: 0.92;
-      letter-spacing: 0.5px;
-      text-shadow: 0 0 4px rgba(0,204,51,0.3);
+      opacity: 0.95;
+      letter-spacing: 0.8px;
+      text-shadow: 0 0 6px rgba(0,204,51,0.4);
     }
 
     .editor-wrapper {
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       width: 100%;
       border: 1px solid #006622;
-      border-radius: 3px;
+      border-radius: 6px;
       overflow: hidden;
-      background: #000811;
-      position: relative;
+      background: #000b11;
+      box-shadow: 0 0 30px rgba(0,80,40,0.3);
     }
 
     .toolbar {
-      background: #000a00;
-      border-bottom: 1px solid #006622;
-      padding: 8px 12px;
+      background: linear-gradient(to bottom, #001400, #000a00);
+      border-bottom: 1px solid #008833;
+      padding: 10px 16px;
       display: flex;
-      gap: 10px;
+      gap: 14px;
       flex-wrap: wrap;
-      z-index: 3;
+      z-index: 5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     }
 
     button {
-      background: #001100;
-      color: #00cc33;
-      border: 1px solid #006622;
-      padding: 8px 16px;
-      font-size: 1.05rem;
+      background: #001a00;
+      color: #33ff77;
+      border: 1px solid #008844;
+      padding: 10px 20px;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+      font-weight: 500;
+      text-shadow: 0 0 4px rgba(51,255,119,0.5);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), 0 0 10px rgba(0,136,68,0.2);
+      min-width: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: 0.6s;
+    }
+
+    button:hover::before {
+      left: 100%;
     }
 
     button:hover {
       background: #003300;
-      color: #00ff66;
-      border-color: #00cc33;
-      box-shadow: 0 0 10px rgba(0,204,51,0.25);
+      color: #66ff99;
+      border-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0,255,136,0.4), inset 0 2px 8px rgba(255,255,255,0.1);
+      transform: translateY(-1px);
     }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.7);
+    }
+
+    /* Button-specific styles */
+    #btnNewTab   { border-color: #0099bb; color: #00ddff; text-shadow: 0 0 5px #00ddff; }
+    #btnNewTab:hover   { border-color: #00eeff; color: #88ffff; box-shadow: 0 0 25px rgba(0,238,255,0.5); }
+
+    #btnOpenFile { border-color: #0088aa; }
+    #btnOpenFile:hover { border-color: #00aaff; box-shadow: 0 0 25px rgba(0,170,255,0.4); }
+
+    #btnSave     { border-color: #00aa44; color: #44ff88; text-shadow: 0 0 5px #44ff88; }
+    #btnSave:hover     { border-color: #00ff66; color: #88ffaa; box-shadow: 0 0 25px rgba(0,255,102,0.5); }
+
+    #btnClear    { border-color: #aa4400; color: #ff9966; text-shadow: 0 0 5px #ff9966; }
+    #btnClear:hover    { border-color: #ff6600; color: #ffbb99; box-shadow: 0 0 25px rgba(255,102,0,0.5); }
+
     #fileInput { display: none; }
+
+    .tab-bar {
+      background: #000d00;
+      border-bottom: 1px solid #008844;
+      display: flex;
+      overflow-x: auto;
+      padding: 6px 16px;
+      gap: 6px;
+      flex-shrink: 0;
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .tab {
+      background: #001a00;
+      color: #44ff88;
+      border: 1px solid #008844;
+      border-bottom: none;
+      padding: 10px 18px;
+      cursor: pointer;
+      min-width: 130px;
+      text-align: center;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.25s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .tab.active {
+      background: #004d00;
+      color: #88ffbb;
+      border-color: #00ff88;
+      box-shadow: 0 4px 16px rgba(0,255,136,0.4);
+    }
+
+    .tab:hover {
+      background: #003300;
+      transform: translateY(-2px);
+    }
+
+    .tab .close {
+      margin-left: 14px;
+      color: #008844;
+      font-weight: bold;
+      font-size: 1.3rem;
+      line-height: 0.9;
+    }
+
+    .tab .close:hover {
+      color: #ff4444;
+    }
 
     #notepad-container {
       position: relative;
@@ -118,7 +208,7 @@
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      opacity: 0.22;
+      opacity: 0.25;
     }
 
     #notepad {
@@ -126,81 +216,83 @@
       z-index: 2;
       height: 100%;
       background: transparent;
-      color: #00ff44;
-      padding: 16px 20px;
-      font-size: 1.15rem;
-      line-height: 1.55;
+      color: #00ff55;
+      padding: 20px 24px;
+      font-size: 1.18rem;
+      line-height: 1.6;
       outline: none;
       white-space: pre-wrap;
       overflow-y: auto;
-      caret-color: transparent;
+      caret-color: #66ff99;
     }
 
     #notepad:empty::before {
-      content: ">> ENTER TEXT OR LOAD FILE...";
-      color: #004d1a;
+      content: ">> READY FOR INPUT ... TYPE OR LOAD SOMETHING~";
+      color: #005522;
     }
 
     #stats {
       text-align: right;
-      color: #009922;
-      font-size: 0.95rem;
-      padding: 6px 12px;
-      background: #000a00;
-      border-top: 1px solid #004d1a;
+      color: #00aa44;
+      font-size: 1rem;
+      padding: 8px 16px;
+      background: #000d00;
+      border-top: 1px solid #006633;
       z-index: 3;
+      text-shadow: 0 0 4px rgba(0,170,68,0.4);
     }
 
     .footer {
       text-align: center;
-      padding: 12px 0;
-      color: #006622;
-      font-size: 0.95rem;
-      border-top: 1px solid #004d1a;
-      text-shadow: 0 0 6px rgba(0,204,51,0.3);
-      animation: soft-glow 4s ease-in-out infinite alternate;
+      padding: 14px 0;
+      color: #008844;
+      font-size: 1rem;
+      border-top: 1px solid #006633;
+      text-shadow: 0 0 8px rgba(0,204,51,0.4);
+      animation: soft-glow 5s ease-in-out infinite alternate;
     }
 
     @keyframes soft-glow {
-      from { text-shadow: 0 0 6px rgba(0,204,51,0.3); }
-      to   { text-shadow: 0 0 12px rgba(0,204,51,0.6); }
+      from { text-shadow: 0 0 8px rgba(0,204,51,0.4); }
+      to   { text-shadow: 0 0 16px rgba(0,204,51,0.7); }
     }
 
     .footer a {
-      color: #00ff66;
+      color: #00ff88;
       text-decoration: none;
       font-weight: 500;
-      text-shadow: 0 0 8px rgba(0,255,102,0.6);
-      transition: all 0.3s;
+      text-shadow: 0 0 10px rgba(0,255,136,0.6);
     }
 
     .footer a:hover {
-      color: #33ff99;
-      text-shadow: 0 0 16px rgba(51,255,153,0.9);
-      transform: translateY(-1px);
+      color: #66ffcc;
+      text-shadow: 0 0 20px rgba(102,255,204,0.9);
     }
 
-    #notepad::-webkit-scrollbar { width: 10px; }
-    #notepad::-webkit-scrollbar-track { background: #000; }
-    #notepad::-webkit-scrollbar-thumb { background: #006622; }
-    #notepad::-webkit-scrollbar-thumb:hover { background: #009922; }
+    #notepad::-webkit-scrollbar { width: 12px; }
+    #notepad::-webkit-scrollbar-track { background: #000b00; }
+    #notepad::-webkit-scrollbar-thumb { background: #008844; border-radius: 6px; }
+    #notepad::-webkit-scrollbar-thumb:hover { background: #00cc66; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div class="title-wrapper">
-        <h1>HACK PAD - TERMINAL</h1>
+        <h1>HACK PAD - TERMINAL v1.2</h1>
       </div>
-      <p class="subtitle">root@session:~/notes # autosave active</p>
+      <p class="subtitle">root@multisession:~/notes # </p>
     </header>
 
     <div class="editor-wrapper">
       <div class="toolbar">
-        <button onclick="document.getElementById('fileInput').click()">OPEN FILE</button>
-        <button onclick="saveAs()">SAVE AS...</button>
-        <button onclick="clearNotes()">CLEAR BUFFER</button>
+        <button id="btnNewTab"   onclick="createNewTabWithName()"> NEW TAB</button>
+        <button id="btnOpenFile" onclick="document.getElementById('fileInput').click()"> OPEN FILE</button>
+        <button id="btnSave"     onclick="saveAs()"> SAVE CURRENT TAB</button>
+        <button id="btnClear"    onclick="clearNotes()"> CLEAN CURRENT TAB</button>
       </div>
+
+      <div class="tab-bar" id="tabBar"></div>
 
       <div id="notepad-container">
         <canvas id="matrix-bg"></canvas>
@@ -208,186 +300,291 @@
       </div>
     </div>
 
-    <input type="file" id="fileInput" accept="text/plain,.txt,.md,.js,.json" />
+    <input type="file" id="fileInput" accept="*/*" multiple />
 
-    <div id="stats">CHAR: 0 | WORDS: 0</div>
+    <div id="stats">CHAR: 0 | WORDS: 0 | TAB: Untitled-1</div>
 
     <div class="footer">
-      Made by DreamXHava - 
+      Crafted by DreamXHava • 
       <a href="https://github.com/Savindudam" target="_blank">More Projects</a>
     </div>
   </div>
 
   <script>
-    const title = document.querySelector('h1');
-    document.addEventListener('mousemove', e => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 12;
-      title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.2}deg) rotateY(${x*0.3}deg)`;
-    });
-
+    // ─── Matrix Rain ────────────────────────────────────────────
     const canvas = document.getElementById('matrix-bg');
     const ctx = canvas.getContext('2d');
 
-    function resize() {
+    function resizeCanvas() {
       canvas.width = canvas.parentElement.offsetWidth;
       canvas.height = canvas.parentElement.offsetHeight;
     }
-    window.addEventListener('resize', resize);
-    resize();
-    setTimeout(resize, 100);
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    setTimeout(resizeCanvas, 100);
 
     const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
     const fontSize = 16;
-    const columns = Math.floor(canvas.width / fontSize) + 1;
-    const drops = Array(columns).fill(1).map(() => Math.random() * -50);
+    let columns, drops;
 
-    function draw() {
-      ctx.fillStyle = 'rgba(0,0,0,0.04)';
+    function initDrops() {
+      columns = Math.floor(canvas.width / fontSize) + 1;
+      drops = Array(columns).fill(1).map(() => Math.random() * -50);
+    }
+    initDrops();
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
       ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle = '#009922';
+      ctx.fillStyle = '#00cc66';
       ctx.font = fontSize + 'px "JetBrains Mono"';
 
-      drops.forEach((y,i) => {
-        const text = chars[Math.floor(Math.random()*chars.length)];
+      drops.forEach((y, i) => {
+        const text = chars[Math.floor(Math.random() * chars.length)];
         const x = i * fontSize;
-        ctx.fillText(text, x, y*fontSize);
-        if (y*fontSize > canvas.height && Math.random() > 0.96) drops[i] = 0;
-        drops[i] += 0.8 + Math.random()*0.4;
+        ctx.fillText(text, x, y * fontSize);
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i] += 0.9 + Math.random() * 0.5;
       });
     }
+    setInterval(drawMatrix, 45);
 
-    setInterval(draw, 50);
+    // ─── Title 3D Hover ─────────────────────────────────────────
+    const title = document.querySelector('h1');
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 24;
+      const y = (e.clientY / window.innerHeight - 0.5) * 14;
+      title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.25}deg) rotateY(${x*0.35}deg)`;
+    });
 
+    // ─── Tab System v1.2.7 ──────────────────────────────────────
+    let tabs = [];
+    let currentTabIndex = -1;
+
+    const tabBar = document.getElementById('tabBar');
     const notepad = document.getElementById('notepad');
     const stats = document.getElementById('stats');
     const fileInput = document.getElementById('fileInput');
 
-    if (localStorage.getItem('hackPadNotes')) {
-      notepad.innerHTML = localStorage.getItem('hackPadNotes');
-      updateStats();
+    function promptForTabName(defaultName = "Untitled") {
+      const input = prompt(
+        "Nyaa~! What should we name this tab senpai?\n(You can include the extension like new.html or secret.md or just notes)",
+        defaultName
+      );
+
+      let name = (input || "").trim();
+      if (!name) {
+        return `Untitled-${tabs.length + 1}.txt`;
+      }
+
+      // Only add .txt if NO extension is present at all
+      if (!/\.[a-zA-Z0-9]+$/.test(name)) {
+        name += '.txt';
+      }
+
+      return name;
     }
 
+    function createNewTabWithName(fromFile = null) {
+      if (tabs.length >= 10) {
+        const newUrl = window.location.href.split('?')[0] + '?fresh=' + Date.now();
+        window.open(newUrl, '_blank');
+        return;
+      }
+
+      let suggestedName = `Untitled-${tabs.length + 1}`;
+      if (fromFile) {
+        suggestedName = fromFile.name;
+      }
+
+      const customName = fromFile ? fromFile.name : promptForTabName(suggestedName);
+
+      const tabId = tabs.length;
+      const tabObj = {
+        id: tabId,
+        title: customName,
+        content: '',
+        fileHandle: null
+      };
+
+      tabs.push(tabObj);
+      switchToTab(tabId);
+
+      if (fromFile) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          tabObj.content = ev.target.result;
+          if (currentTabIndex === tabId) {
+            notepad.innerText = tabObj.content;
+            updateStats();
+          }
+          renderTabs();
+        };
+        reader.readAsText(fromFile);
+      } else {
+        renderTabs();
+      }
+    }
+
+    function switchToTab(index) {
+      if (index < 0 || index >= tabs.length) return;
+      currentTabIndex = index;
+
+      const tab = tabs[index];
+      notepad.innerText = tab.content || '';
+      updateStats();
+      renderTabs();
+      notepad.focus();
+    }
+
+    function updateCurrentTabContent() {
+      if (currentTabIndex >= 0 && tabs[currentTabIndex]) {
+        tabs[currentTabIndex].content = notepad.innerText;
+      }
+    }
+
+    function renderTabs() {
+      tabBar.innerHTML = '';
+
+      tabs.forEach((tab, i) => {
+        const tabEl = document.createElement('div');
+        tabEl.className = 'tab' + (i === currentTabIndex ? ' active' : '');
+        tabEl.innerHTML = `
+          <span onclick="switchToTab(${i})">${tab.title}</span>
+          <span class="close" onclick="event.stopPropagation(); closeTab(${i})">×</span>
+        `;
+        tabBar.appendChild(tabEl);
+      });
+    }
+
+    function closeTab(index) {
+      if (tabs.length === 1) {
+        tabs[0].content = '';
+        notepad.innerText = '';
+        updateStats();
+        renderTabs();
+        return;
+      }
+
+      tabs.splice(index, 1);
+      if (currentTabIndex === index) {
+        currentTabIndex = Math.max(0, index - 1);
+      } else if (currentTabIndex > index) {
+        currentTabIndex--;
+      }
+
+      switchToTab(currentTabIndex);
+      renderTabs();
+    }
+
+    // ─── Events ─────────────────────────────────────────────────
     notepad.addEventListener('input', () => {
-      localStorage.setItem('hackPadNotes', notepad.innerHTML);
+      updateCurrentTabContent();
       updateStats();
     });
 
-    function updateStats() {
-      const text = notepad.innerText || '';
-      stats.textContent = `CHAR: ${text.length} | WORDS: ${text.trim().split(/\s+/).filter(Boolean).length}`;
-    }
-
     fileInput.addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        notepad.innerText = ev.target.result;
-        localStorage.setItem('hackPadNotes', notepad.innerHTML);
-        updateStats();
-      };
-      reader.readAsText(file);
+      const files = e.target.files;
+      if (!files.length) return;
+      Array.from(files).forEach(file => createNewTabWithName(file));
       fileInput.value = '';
     });
 
     async function saveAs() {
-      const text = notepad.innerText || '';
-      if (!text.trim()) return alert("[ERROR] Buffer is empty");
-      const name = 'notes_dump.txt';
+      if (currentTabIndex < 0) {
+        alert("[ERROR] No active tab nya~!");
+        return;
+      }
+
+      const tab = tabs[currentTabIndex];
+      const text = tab.content || '';
+
+      // Use EXACT user-given name + extension
+      const suggestedName = tab.title;
+
+      // Detect common extensions to suggest proper types (but fallback to no types if unknown)
+      const lowerName = suggestedName.toLowerCase();
+      let types = null;
+
+      if (lowerName.endsWith('.txt') || lowerName.endsWith('.md') || lowerName.endsWith('.js') || 
+          lowerName.endsWith('.json') || lowerName.endsWith('.html') || lowerName.endsWith('.htm') ||
+          lowerName.endsWith('.css') || lowerName.endsWith('.py') || lowerName.endsWith('.xml')) {
+        types = [{
+          description: 'Text / Code Files',
+          accept: {
+            'text/plain': ['.txt'],
+            'text/markdown': ['.md'],
+            'text/javascript': ['.js'],
+            'application/json': ['.json'],
+            'text/html': ['.html', '.htm'],
+            'text/css': ['.css'],
+            'text/x-python': ['.py'],
+            'application/xml': ['.xml']
+          }
+        }];
+      }
+      // If no known extension or we want "All Files" freedom → no types restriction
+
       try {
-        if ('showSaveFilePicker' in window) {
-          const handle = await window.showSaveFilePicker({suggestedName: name});
+        let handle = tab.fileHandle;
+        if (!handle && 'showSaveFilePicker' in window) {
+          const pickerOptions = {
+            suggestedName: suggestedName
+          };
+          if (types) {
+            pickerOptions.types = types;
+          }
+          // If no types, browser usually shows "All Files" by default
+
+          handle = await window.showSaveFilePicker(pickerOptions);
+          tab.fileHandle = handle;
+          tab.title = handle.name; // sync if user changes name in dialog
+        }
+
+        if (handle) {
           const writable = await handle.createWritable();
           await writable.write(text);
           await writable.close();
         } else {
-          const blob = new Blob([text], {type: 'text/plain'});
+          // Fallback download - generic type so extension is respected
+          const blob = new Blob([text], { type: 'application/octet-stream' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = url; a.download = name; a.click();
+          a.href = url;
+          a.download = suggestedName;
+          a.click();
           URL.revokeObjectURL(url);
         }
+
+        renderTabs();
       } catch (err) {
-        if (err.name !== 'AbortError') alert("[FAIL] Could not save");
+        if (err.name !== 'AbortError') {
+          alert("[Oof] Save glitch... " + err.message);
+        }
       }
     }
 
     function clearNotes() {
-      if (confirm("Wipe buffer?")) {
-        notepad.innerHTML = '';
-        localStorage.removeItem('hackPadNotes');
-        updateStats();
+      if (confirm("Purge current tab buffer?")) {
+        if (currentTabIndex >= 0) {
+          tabs[currentTabIndex].content = '';
+          notepad.innerText = '';
+          updateStats();
+        }
       }
     }
 
+    function updateStats() {
+      const text = notepad.innerText || '';
+      const charCount = text.length;
+      const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+      const tabName = currentTabIndex >= 0 ? tabs[currentTabIndex].title : 'No tab';
+      stats.textContent = `CHAR: ${charCount} | WORDS: ${wordCount} | TAB: ${tabName}`;
+    }
+
+    // ─── Init ───────────────────────────────────────────────────
+    if (tabs.length === 0) createNewTabWithName();
     notepad.focus();
-    updateStats();
   </script>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </html>
