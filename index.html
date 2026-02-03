@@ -306,12 +306,11 @@
 
     <div class="footer">
       Crafted by DreamXHava • 
-      <a href="https://github.com/Savindudam" target="_blank">More Projects</a>
+      <a href="https://github.com/Savindudam" target="_blank">More Projecs</a>
     </div>
   </div>
 
   <script>
-    // ─── Matrix Rain ────────────────────────────────────────────
     const canvas = document.getElementById('matrix-bg');
     const ctx = canvas.getContext('2d');
 
@@ -349,7 +348,6 @@
     }
     setInterval(drawMatrix, 45);
 
-    // ─── Title 3D Hover ─────────────────────────────────────────
     const title = document.querySelector('h1');
     document.addEventListener('mousemove', e => {
       const x = (e.clientX / window.innerWidth - 0.5) * 24;
@@ -357,7 +355,6 @@
       title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.25}deg) rotateY(${x*0.35}deg)`;
     });
 
-    // ─── Tab System v1.2.7 ──────────────────────────────────────
     let tabs = [];
     let currentTabIndex = -1;
 
@@ -377,7 +374,6 @@
         return `Untitled-${tabs.length + 1}.txt`;
       }
 
-      // Only add .txt if NO extension is present at all
       if (!/\.[a-zA-Z0-9]+$/.test(name)) {
         name += '.txt';
       }
@@ -477,7 +473,6 @@
       renderTabs();
     }
 
-    // ─── Events ─────────────────────────────────────────────────
     notepad.addEventListener('input', () => {
       updateCurrentTabContent();
       updateStats();
@@ -499,10 +494,8 @@
       const tab = tabs[currentTabIndex];
       const text = tab.content || '';
 
-      // Use EXACT user-given name + extension
       const suggestedName = tab.title;
 
-      // Detect common extensions to suggest proper types (but fallback to no types if unknown)
       const lowerName = suggestedName.toLowerCase();
       let types = null;
 
@@ -523,7 +516,6 @@
           }
         }];
       }
-      // If no known extension or we want "All Files" freedom → no types restriction
 
       try {
         let handle = tab.fileHandle;
@@ -534,11 +526,10 @@
           if (types) {
             pickerOptions.types = types;
           }
-          // If no types, browser usually shows "All Files" by default
 
           handle = await window.showSaveFilePicker(pickerOptions);
           tab.fileHandle = handle;
-          tab.title = handle.name; // sync if user changes name in dialog
+          tab.title = handle.name; 
         }
 
         if (handle) {
@@ -546,7 +537,6 @@
           await writable.write(text);
           await writable.close();
         } else {
-          // Fallback download - generic type so extension is respected
           const blob = new Blob([text], { type: 'application/octet-stream' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -582,7 +572,7 @@
       stats.textContent = `CHAR: ${charCount} | WORDS: ${wordCount} | TAB: ${tabName}`;
     }
 
-    // ─── Init ───────────────────────────────────────────────────
+    
     if (tabs.length === 0) createNewTabWithName();
     notepad.focus();
   </script>
