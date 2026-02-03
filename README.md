@@ -32,7 +32,7 @@ This is a lightweight, browser-based notepad with a terminal / hacker-style UI.B
      
 ### Online use :
 
-1. Just open this link and start typting : https://web-hackpad-v1.netlify.app/ 
+1. Just open this link and start typting : (https://web-notepad-nine.vercel.app/)
 2. That's it you did it , easy as that
 ---
 
