@@ -7,7 +7,6 @@ This is a lightweight, browser-based notepad with a terminal / hacker-style UI.B
 
 - Terminal-inspired UI with Matrix-style background
 - Editable text area (like a minimal Notepad)
-- Autosave using `localStorage`
 - Open `.txt`, `.md`, `.js`, `.json` files
 - Save notes to a file
 - Live character & word counter
