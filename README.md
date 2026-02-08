@@ -12,7 +12,7 @@ This is a lightweight, browser-based notepad with a terminal / hacker-style UI.B
 - Live character & word counter
 - Works fully offline
 - No frameworks, no dependencies
-
+- New features are added
 ---
 
 ### 🖥️ Preview
@@ -58,7 +58,6 @@ Saving works using:
 
 ## ⚠️ Notes
 
-- Autosave uses browser `localStorage`
 - Clearing browser data will remove saved notes
 - Matrix animation is visual only (no performance impact on text)
 
