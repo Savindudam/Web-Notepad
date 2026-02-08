@@ -6,6 +6,7 @@
   <title>HACK PAD - TERMINEL v1.2.7</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
   <style>
     :root {
       --primary: #00cc33;
@@ -15,12 +16,14 @@
       --border: #006622;
       --glow: rgba(0,255,68,0.5);
     }
+
     [data-theme="red"] {
       --primary: #cc0033;
       --accent: #ff0044;
       --border: #660011;
       --glow: rgba(255,0,68,0.5);
     }
+
     [data-theme="blue"] {
       --primary: #0033cc;
       --accent: #0044ff;
@@ -159,8 +162,8 @@
     #btnOpenFile { border-color: #0088aa; }
     #btnSave     { border-color: #00aa44; }
     #btnClear    { border-color: #aa4400; }
-    #btnExportAll { border-color: #aa00aa; color: #ff88ff; }
     #btnDuplicate { border-color: #ffaa00; color: #ffdd44; }
+    #btnExportAll { border-color: #aa00aa; color: #ff88ff; }
 
     #fileInput { display: none; }
 
@@ -299,7 +302,6 @@
       box-shadow: 0 0 10px rgba(255,255,0,0.7);
     }
 
-    /* Hide Next/Prev buttons initially */
     #btnNext, #btnPrev {
       display: none;
     }
@@ -350,7 +352,6 @@
     const APP_VERSION = '1.2.7';
     document.title = `HACK PAD - TERMINEL v${APP_VERSION}`;
 
-    // Matrix Rain Background
     const canvas = document.getElementById('matrix-bg');
     const ctx = canvas.getContext('2d');
 
@@ -388,7 +389,6 @@
     }
     setInterval(drawMatrix, 45);
 
-    // Title 3D hover
     const title = document.querySelector('h1');
     document.addEventListener('mousemove', e => {
       const x = (e.clientX / window.innerWidth - 0.5) * 24;
@@ -396,7 +396,6 @@
       title.style.transform = `translate(${x}px, ${y}px) rotateX(${y*0.25}deg) rotateY(${x*0.35}deg)`;
     });
 
-    // Core App State
     let tabs = [];
     let currentTabIndex = -1;
     const SESSION_KEY = 'hackpad_session_v1';
@@ -411,7 +410,6 @@
     let searchMatches = [];
     let currentMatchIndex = -1;
 
-    // Tab Management
     function promptForTabName(defaultName = "Untitled") {
       const input = prompt("What should we name this Tab?\n(You can use extensions like .html, .py, etc.)", defaultName);
       let name = (input || "").trim();
@@ -481,7 +479,6 @@
 
     function switchToTab(index) {
       if (index < 0 || index >= tabs.length) {
-        // No tabs case
         currentTabIndex = -1;
         notepad.innerText = '';
         notepad.classList.add('no-tabs');
@@ -497,7 +494,6 @@
       updateStats();
       renderTabs();
       notepad.focus();
-      // Clear search on switch
       searchInput.value = '';
       highlightSearch('');
     }
@@ -507,13 +503,11 @@
       const tab = tabs[currentTabIndex];
       const newContent = notepad.innerText;
 
-      // Early return if no actual change
       if (newContent === tab.content) {
         updateStats();
         return;
       }
 
-      // Change detected - update history if needed
       if (newContent !== tab.history[tab.historyIndex]) {
         tab.history = tab.history.slice(0, tab.historyIndex + 1);
         tab.history.push(newContent);
@@ -568,7 +562,6 @@
       renderTabs();
     }
 
-    // Session Restore (basic, non-auto-save)
     function saveSession() {
       if (tabs.length > 0) {
         const saveData = tabs.map(tab => ({
@@ -583,7 +576,6 @@
 
     window.addEventListener('beforeunload', saveSession);
 
-    // Restore on load
     window.addEventListener('load', () => {
       const saved = localStorage.getItem(SESSION_KEY);
       if (saved && tabs.length === 0) {
@@ -602,17 +594,13 @@
           if (tabs.length > 0) {
             switchToTab(0);
             renderTabs();
-            console.log('Session restored ♡');
           }
-        } catch(e) {
-          console.error('Restore failed:', e);
-        }
+        } catch(e) {}
       }
       if (tabs.length === 0) createNewTabWithName();
       notepad.focus();
     });
 
-    // Drag & Drop
     notepadContainer.addEventListener('dragover', e => {
       e.preventDefault();
       notepadContainer.classList.add('dragover');
@@ -624,7 +612,6 @@
       Array.from(e.dataTransfer.files).forEach(file => createNewTabWithName(file));
     });
 
-    // Theme Switcher
     const themes = ['green', 'red', 'blue'];
     let currentThemeIndex = themes.indexOf(localStorage.getItem('hackpad_theme') || 'green');
 
@@ -640,7 +627,6 @@
 
     applyTheme();
 
-    // Save with better MIME
     async function saveAs() {
       if (currentTabIndex < 0) {
         alert("[ERROR] No active tab nya~!");
@@ -703,7 +689,6 @@
       }
     }
 
-    // Export All Tabs as ZIP
     async function exportAllTabs() {
       if (tabs.length === 0) {
         alert("Nothing to export nya~");
@@ -726,9 +711,7 @@
       alert(`Exported ${tabs.length} tabs as ZIP nya~ ♡`);
     }
 
-    // Search Functionality
     function highlightSearch(query) {
-      // Always start with clean text (strip any existing tags)
       const cleanText = notepad.innerHTML.replace(/<[^>]*>/g, '');
       notepad.innerHTML = cleanText;
 
@@ -739,7 +722,7 @@
         return;
       }
 
-      const text = notepad.innerText; // Use innerText for accurate content
+      const text = notepad.innerText;
       const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
       let highlighted = '';
       let lastIndex = 0;
@@ -758,7 +741,7 @@
       if (searchMatches.length > 0) {
         currentMatchIndex = 0;
         highlightCurrentMatch();
-        setTimeout(scrollToCurrentMatch, 50); // Delay for render
+        setTimeout(scrollToCurrentMatch, 50);
       }
     }
 
@@ -775,7 +758,7 @@
       if (currentMark) {
         setTimeout(() => {
           currentMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 0); // Queue after current execution stack
+        }, 0);
       }
     }
 
@@ -796,22 +779,19 @@
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.trim();
       highlightSearch(query);
-      // Show/hide Next/Prev buttons based on if search has input
       document.getElementById('btnNext').style.display = query ? 'inline-block' : 'none';
       document.getElementById('btnPrev').style.display = query ? 'inline-block' : 'none';
     });
 
-    // Undo / Redo
     function undo() {
       if (currentTabIndex < 0) return;
       const tab = tabs[currentTabIndex];
       if (tab.historyIndex > 0) {
         tab.historyIndex--;
         const previousContent = tab.history[tab.historyIndex];
-        tab.content = previousContent; // Update content first to match upcoming DOM set
+        tab.content = previousContent;
         notepad.innerText = previousContent;
         updateStats();
-        // Reapply search after content change
         highlightSearch(searchInput.value);
       }
     }
@@ -822,15 +802,13 @@
       if (tab.historyIndex < tab.history.length - 1) {
         tab.historyIndex++;
         const nextContent = tab.history[tab.historyIndex];
-        tab.content = nextContent; // Update content first to match upcoming DOM set
+        tab.content = nextContent;
         notepad.innerText = nextContent;
         updateStats();
-        // Reapply search after content change
         highlightSearch(searchInput.value);
       }
     }
 
-    // Events
     notepad.addEventListener('input', updateCurrentTabContent);
 
     fileInput.addEventListener('change', e => {
@@ -880,7 +858,6 @@
       stats.textContent = `CHAR: ${charCount} | WORDS: ${wordCount} | TAB: ${tabName}`;
     }
 
-    // Initial setup
     if (tabs.length === 0) createNewTabWithName();
     notepad.focus();
   </script>
